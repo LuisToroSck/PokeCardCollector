@@ -7,6 +7,13 @@
     <div class="catalog-heading">
       <div><p class="eyebrow">Selección especial</p><h2>Legendarios</h2></div><span>{{ vm.pokemon.length }} Pokémon</span>
     </div>
+    <div class="progress-grid single" aria-label="Progreso de la colección">
+      <article class="progress-card total">
+        <div><span>Legendarios obtenidos</span><strong>{{ vm.percent }}%</strong></div>
+        <div class="progress-track"><span [style.width.%]="vm.percent"></span></div>
+        <small>{{ vm.obtained }} de {{ vm.total }} obtenidos</small>
+      </article>
+    </div>
     <div class="controls">
       <label class="search"><input [formControl]="search" type="search" placeholder="Buscar un legendario..." /></label>
       <div class="filter-toggles" aria-label="Filtrar colección">

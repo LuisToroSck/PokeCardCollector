@@ -23,13 +23,19 @@ export class Martin {
     this.collection.watchOwned('martin').pipe(
       catchError(() => { this.firestoreError.set(true); return of(new Set<number>()); }),
     ),
-  ]).pipe(map(([pokemon, term, filter, ownedIds]) => ({
-    ownedIds,
-    pokemon: pokemon.filter((item) =>
-      item.name.includes(term.trim().toLowerCase()) &&
-      (filter === 'all' || (filter === 'owned' ? ownedIds.has(item.id) : !ownedIds.has(item.id))),
-    ),
-  })));
+  ]).pipe(map(([pokemon, term, filter, ownedIds]) => {
+    const obtained = pokemon.filter((item) => ownedIds.has(item.id)).length;
+    return {
+      ownedIds,
+      obtained,
+      total: pokemon.length,
+      percent: pokemon.length ? Math.round((obtained / pokemon.length) * 1000) / 10 : 0,
+      pokemon: pokemon.filter((item) =>
+        item.name.includes(term.trim().toLowerCase()) &&
+        (filter === 'all' || (filter === 'owned' ? ownedIds.has(item.id) : !ownedIds.has(item.id))),
+      ),
+    };
+  }));
 
   toggleFilter(filter: 'owned' | 'missing'): void {
     this.filter.setValue(this.filter.value === filter ? 'all' : filter);

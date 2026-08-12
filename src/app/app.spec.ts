@@ -40,6 +40,7 @@ describe('Collections', () => {
     httpTesting.expectOne('https://pokeapi.co/api/v2/generation/1').flush({
       pokemon_species: [{ name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon-species/1/' }],
     });
+    httpTesting.expectOne('https://pokeapi.co/api/v2/pokemon-species?limit=1').flush({ count: 1025 });
     fixture.detectChanges();
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Bulbasaur');

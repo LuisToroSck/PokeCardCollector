@@ -14,6 +14,18 @@
       <div><p class="eyebrow">{{ vm.region.generation }}</p><h2>{{ vm.region.name }}</h2></div>
       <span>{{ vm.pokemon.length }} Pokémon</span>
     </div>
+    <div class="progress-grid" aria-label="Progreso de la colección">
+      <article class="progress-card">
+        <div><span>{{ vm.region.name }}</span><strong>{{ vm.regionPercent }}%</strong></div>
+        <div class="progress-track"><span [style.width.%]="vm.regionPercent"></span></div>
+        <small>{{ vm.regionOwned }} de {{ vm.regionTotal }} obtenidos</small>
+      </article>
+      <article class="progress-card total">
+        <div><span>Pokédex total</span><strong>{{ vm.totalPercent }}%</strong></div>
+        <div class="progress-track"><span [style.width.%]="vm.totalPercent"></span></div>
+        <small>{{ vm.totalOwned }} de {{ vm.totalCount }} obtenidos</small>
+      </article>
+    </div>
     <div class="controls">
       <label class="search"><input [formControl]="search" type="search" [placeholder]="'Buscar en ' + vm.region.name + '...'" /></label>
       <div class="filter-toggles" aria-label="Filtrar colección">

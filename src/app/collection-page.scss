@@ -7,6 +7,15 @@
 .catalog-heading .eyebrow { color: #ef3d4f; }
 .catalog-heading h2 { margin: 0; color: #151923; font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .catalog-heading > span { color: #777d88; font-size: .9rem; }
+.progress-grid { margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+.progress-grid.single { grid-template-columns: minmax(0, 560px); }
+.progress-card { padding: 1rem 1.1rem; border: 1px solid #e1e3e8; border-radius: 13px; background: #fff; }
+.progress-card > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #565c67; font-size: .86rem; font-weight: 700; }
+.progress-card strong { color: #ef3d4f; font-size: 1.25rem; }
+.progress-track { height: 8px; margin: .8rem 0 .55rem; overflow: hidden; border-radius: 99px; background: #eceef2; }
+.progress-track span { height: 100%; min-width: 0; display: block; border-radius: inherit; background: linear-gradient(90deg, #ef3d4f, #ff7180); transition: width .3s ease; }
+.progress-card.total .progress-track span { background: linear-gradient(90deg, #2865d8, #63a0ff); }
+.progress-card small { color: #858a94; font-size: .76rem; }
 .search { width: min(100%, 400px); height: 46px; margin-bottom: 1.5rem; padding: 0 1rem; display: flex; align-items: center; border: 1px solid #dfe1e6; border-radius: 11px; background: #fff; }
 .search input { width: 100%; border: 0; outline: 0; font: inherit; }
 .controls { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
@@ -21,4 +30,4 @@
 .regions { margin: 0 0 1.7rem; padding-bottom: .5rem; display: flex; gap: .55rem; overflow-x: auto; }
 .regions button { padding: .65rem 1rem; border: 1px solid #dfe1e6; border-radius: 99px; white-space: nowrap; color: #626773; background: #fff; font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
 .regions button.active { border-color: #ef3d4f; color: #fff; background: #ef3d4f; }
-@media (max-width: 600px) { .catalog-heading { align-items: flex-start; flex-direction: column; } .controls { align-items: stretch; flex-direction: column; } .controls .search { width: 100%; } .filter-toggles button { flex: 1; } }
+@media (max-width: 600px) { .catalog-heading { align-items: flex-start; flex-direction: column; } .progress-grid { grid-template-columns: 1fr; } .controls { align-items: stretch; flex-direction: column; } .controls .search { width: 100%; } .filter-toggles button { flex: 1; } }

@@ -28,17 +28,27 @@ export class Luis {
     })),
     this.search.valueChanges.pipe(startWith('')),
     this.filter.valueChanges.pipe(startWith('all' as const)),
+    this.service.getSpeciesCount().pipe(catchError(() => of(1025))),
     this.collection.watchOwned('luis').pipe(
       catchError(() => { this.firestoreError.set(true); return of(new Set<number>()); }),
     ),
-  ]).pipe(map(([data, term, filter, ownedIds]) => ({
-    ...data,
-    ownedIds,
-    pokemon: data.pokemon.filter((item) =>
-      item.name.includes(term.trim().toLowerCase()) &&
-      (filter === 'all' || (filter === 'owned' ? ownedIds.has(item.id) : !ownedIds.has(item.id))),
-    ),
-  })));
+  ]).pipe(map(([data, term, filter, speciesCount, ownedIds]) => {
+    const regionOwned = data.pokemon.filter((item) => ownedIds.has(item.id)).length;
+    return {
+      ...data,
+      ownedIds,
+      regionOwned,
+      regionTotal: data.pokemon.length,
+      regionPercent: this.percentage(regionOwned, data.pokemon.length),
+      totalOwned: ownedIds.size,
+      totalCount: speciesCount,
+      totalPercent: this.percentage(ownedIds.size, speciesCount),
+      pokemon: data.pokemon.filter((item) =>
+        item.name.includes(term.trim().toLowerCase()) &&
+        (filter === 'all' || (filter === 'owned' ? ownedIds.has(item.id) : !ownedIds.has(item.id))),
+      ),
+    };
+  }));
 
   selectRegion(region: (typeof REGIONS)[number]): void { this.regionSubject.next(region); }
   retry(): void { this.regionSubject.next(this.regionSubject.value); }
@@ -56,5 +66,9 @@ export class Luis {
     } finally {
       this.savingIds.update((ids) => { const next = new Set(ids); next.delete(pokemon.id); return next; });
     }
+  }
+
+  private percentage(obtained: number, total: number): number {
+    return total ? Math.round((obtained / total) * 1000) / 10 : 0;
   }
 }

@@ -4,6 +4,7 @@ import { Observable, map, shareReplay } from 'rxjs';
 
 interface NamedResource { name: string; url: string; }
 interface GenerationResponse { pokemon_species: NamedResource[]; }
+interface ResourceCountResponse { count: number; }
 interface LegendaryGraphqlResponse { data: { pokemon_species: { id: number; name: string }[] }; }
 
 export interface PokemonListItem {
@@ -37,6 +38,7 @@ export class PokemonService {
   private readonly graphqlUrl = 'https://graphql.pokeapi.co/v1beta2';
   private readonly generationCache = new Map<number, Observable<PokemonListItem[]>>();
   private legendaryCache?: Observable<PokemonListItem[]>;
+  private speciesCountCache?: Observable<number>;
 
   getByGeneration(generationId: number): Observable<PokemonListItem[]> {
     const cached = this.generationCache.get(generationId);
@@ -69,6 +71,16 @@ export class PokemonService {
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     return this.legendaryCache;
+  }
+
+  getSpeciesCount(): Observable<number> {
+    this.speciesCountCache ??= this.http
+      .get<ResourceCountResponse>(`${this.restUrl}/pokemon-species?limit=1`)
+      .pipe(
+        map(({ count }) => count),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+    return this.speciesCountCache;
   }
 
   private toListItem(id: number, name: string): PokemonListItem {
