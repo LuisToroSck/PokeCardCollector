@@ -1,0 +1,13 @@
+:host { display: block; min-height: 100vh; }
+.topbar { min-height: 72px; padding: 0 clamp(1rem, 5vw, 5rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #fff; border-bottom: 1px solid #e8e8ec; }
+.brand { display: flex; align-items: center; gap: .7rem; color: #151923; text-decoration: none; font-size: 1.15rem; font-weight: 700; }
+.brand strong { color: #ef3d4f; }
+.pokeball { width: 30px; height: 30px; flex: 0 0 auto; border: 3px solid #151923; border-radius: 50%; background: linear-gradient(#ef3d4f 0 44%, #151923 44% 56%, #fff 56%); position: relative; }
+.pokeball::after { content: ''; position: absolute; width: 8px; height: 8px; border: 3px solid #151923; border-radius: 50%; background: #fff; inset: 8px; }
+nav { align-self: stretch; display: flex; gap: .35rem; }
+nav a { padding: 0 1rem; display: flex; align-items: center; gap: .35rem; position: relative; color: #686d78; text-decoration: none; font-size: .88rem; font-weight: 750; }
+nav a span { color: #a0a4ac; font-size: .72rem; font-weight: 500; }
+nav a::after { content: ''; position: absolute; height: 3px; inset: auto .8rem 0; border-radius: 4px 4px 0 0; background: transparent; }
+nav a.active { color: #e93449; }
+nav a.active::after { background: #e93449; }
+@media (max-width: 650px) { .topbar { min-height: 112px; padding-top: .8rem; flex-direction: column; } nav { min-height: 52px; width: 100%; justify-content: center; } nav a span { display: none; } }

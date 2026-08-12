@@ -1,0 +1,8 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.15rem; }
+.pokemon-card { min-height: 300px; padding: 1rem; display: flex; flex-direction: column; border: 1px solid #e5e6eb; border-radius: 16px; background: #fff; box-shadow: 0 5px 15px rgba(25,29,40,.04); transition: transform .2s, box-shadow .2s; }
+.pokemon-card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(25,29,40,.1); }
+.number { align-self: flex-end; color: #969aa3; font-size: .75rem; font-weight: 800; }
+.image-wrap { height: 165px; margin: .25rem 0; display: grid; place-items: center; border-radius: 12px; background: linear-gradient(145deg, #f6f6f8, #eceef2); }
+.image-wrap img { width: 145px; height: 145px; object-fit: contain; filter: drop-shadow(0 8px 5px rgba(0,0,0,.12)); }
+h3 { margin: .65rem 0 1rem; color: #191d28; font-size: 1.05rem; }
+button { margin-top: auto; padding: .7rem 1rem; border: 0; border-radius: 9px; background: #f1f2f5; color: #9296a0; font: inherit; font-size: .82rem; font-weight: 750; cursor: not-allowed; }

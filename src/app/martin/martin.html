@@ -1,0 +1,21 @@
+<section class="hero">
+  <p class="eyebrow">Colección de Martín</p>
+  <h1>Pokémon legendarios</h1>
+  <p>Solo especies que PokéAPI clasifica oficialmente como legendarias. Los Pokémon míticos son una categoría distinta.</p>
+</section>
+@if (pokemon$ | async; as pokemon) {
+  <section class="catalog">
+    <div class="catalog-heading">
+      <div><p class="eyebrow">Selección especial</p><h2>Legendarios</h2></div>
+      <span>{{ pokemon.length }} Pokémon</span>
+    </div>
+    <label class="search"><input [formControl]="search" type="search" placeholder="Buscar un legendario..." /></label>
+    @if (error()) {
+      <div class="state-card">No pudimos consultar los Pokémon legendarios.</div>
+    } @else if (pokemon.length) {
+      <app-pokemon-grid [pokemon]="pokemon" owner="Martín" />
+    } @else {
+      <div class="state-card">No hay legendarios que coincidan con la búsqueda.</div>
+    }
+  </section>
+}

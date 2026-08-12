@@ -1,0 +1,26 @@
+<section class="hero">
+  <p class="eyebrow">Colección de Luis</p>
+  <h1>Una Pokédex completa</h1>
+  <p>Todos los Pokémon, ordenados por la región y generación en que aparecieron por primera vez.</p>
+</section>
+@if (vm$ | async; as vm) {
+  <section class="catalog">
+    <nav class="regions" aria-label="Regiones Pokémon">
+      @for (region of regions; track region.id) {
+        <button type="button" [class.active]="region.id === vm.region.id" (click)="selectRegion(region)">{{ region.name }}</button>
+      }
+    </nav>
+    <div class="catalog-heading">
+      <div><p class="eyebrow">{{ vm.region.generation }}</p><h2>{{ vm.region.name }}</h2></div>
+      <span>{{ vm.pokemon.length }} Pokémon</span>
+    </div>
+    <label class="search"><input [formControl]="search" type="search" [placeholder]="'Buscar en ' + vm.region.name + '...'" /></label>
+    @if (error()) {
+      <div class="state-card"><p>No pudimos cargar esta generación.</p><button type="button" (click)="retry()">Intentar otra vez</button></div>
+    } @else if (vm.pokemon.length) {
+      <app-pokemon-grid [pokemon]="vm.pokemon" owner="Luis" />
+    } @else {
+      <div class="state-card">No hay coincidencias en esta región.</div>
+    }
+  </section>
+}
