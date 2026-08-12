@@ -46,7 +46,7 @@ describe('Collections', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Bulbasaur');
   });
 
-  it('requests only legendary species for Martin', async () => {
+  it('requests legendary and mythical species for Martin', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject((await import('@angular/router')).Router);
     await router.navigateByUrl('/martin');
@@ -54,9 +54,17 @@ describe('Collections', () => {
 
     const request = httpTesting.expectOne('https://graphql.pokeapi.co/v1beta2');
     expect(request.request.body.query).toContain('is_legendary');
-    request.flush({ data: { pokemon_species: [{ id: 144, name: 'articuno' }] } });
+    expect(request.request.body.query).toContain('is_mythical');
+    request.flush({ data: { pokemon_species: [{ id: 144, name: 'articuno' }, { id: 151, name: 'mew' }] } });
+    httpTesting.expectOne('https://pokeapi.co/api/v2/generation/1').flush({
+      pokemon_species: [
+        { name: 'articuno', url: 'https://pokeapi.co/api/v2/pokemon-species/144/' },
+        { name: 'mew', url: 'https://pokeapi.co/api/v2/pokemon-species/151/' },
+      ],
+    });
     fixture.detectChanges();
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Articuno');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Mew');
   });
 });

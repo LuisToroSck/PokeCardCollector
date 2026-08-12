@@ -57,8 +57,16 @@ export class PokemonService {
   getLegendary(): Observable<PokemonListItem[]> {
     if (this.legendaryCache) return this.legendaryCache;
 
-    const query = `query LegendaryPokemon {
-      pokemon_species: pokemonspecies(where: { is_legendary: { _eq: true } }, order_by: { id: asc }) {
+    const query = `query SpecialPokemon {
+      pokemon_species: pokemonspecies(
+        where: {
+          _or: [
+            { is_legendary: { _eq: true } }
+            { is_mythical: { _eq: true } }
+          ]
+        }
+        order_by: { id: asc }
+      ) {
         id
         name
       }
