@@ -1,13 +1,31 @@
 <div class="grid">
   @for (item of pokemon(); track item.id) {
-    <article class="pokemon-card">
+    <article class="pokemon-card" [class.obtained]="ownedIds().has(item.id)">
       <span class="number">#{{ item.id.toString().padStart(4, '0') }}</span>
       <div class="image-wrap">
-        <img [src]="item.imageUrl" [alt]="item.name | titlecase" loading="lazy" />
+        <img
+          [src]="item.imageUrl"
+          [alt]="item.name | titlecase"
+          referrerpolicy="no-referrer"
+          (error)="useFallbackImage($event, item.id)"
+        />
       </div>
       <h3>{{ item.name | titlecase }}</h3>
-      <button type="button" disabled [title]="'Disponible al conectar la colección de ' + owner()">
-        Agregar a colección
+      <button
+        type="button"
+        [class.remove]="ownedIds().has(item.id)"
+        [disabled]="savingIds().has(item.id)"
+        (click)="togglePokemon.emit(item)"
+      >
+        <span>
+          @if (savingIds().has(item.id)) {
+            Guardando...
+          } @else if (ownedIds().has(item.id)) {
+            ✓ Obtenido · Quitar
+          } @else {
+            Agregar a colección
+          }
+        </span>
       </button>
     </article>
   }

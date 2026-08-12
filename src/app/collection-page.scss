@@ -9,9 +9,16 @@
 .catalog-heading > span { color: #777d88; font-size: .9rem; }
 .search { width: min(100%, 400px); height: 46px; margin-bottom: 1.5rem; padding: 0 1rem; display: flex; align-items: center; border: 1px solid #dfe1e6; border-radius: 11px; background: #fff; }
 .search input { width: 100%; border: 0; outline: 0; font: inherit; }
+.controls { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+.controls .search { margin: 0; }
+.filter-toggles { display: flex; gap: .5rem; }
+.filter-toggles button { height: 46px; padding: 0 1rem; border: 1px solid #dfe1e6; border-radius: 11px; white-space: nowrap; color: #565c67; background: #fff; font: inherit; font-size: .84rem; font-weight: 700; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+.filter-toggles button:hover { border-color: #ef3d4f; color: #d92c40; }
+.filter-toggles button.active { border-color: #ef3d4f; color: #fff; background: #ef3d4f; }
+.firestore-error { margin: 0 0 1.3rem; padding: .9rem 1rem; border: 1px solid #f0c36a; border-radius: 10px; color: #795713; background: #fff8e8; font-size: .88rem; }
 .state-card { padding: 4rem 1rem; border-radius: 16px; text-align: center; color: #656b76; background: #fff; }
 .state-card button { padding: .7rem 1rem; border: 0; border-radius: 9px; color: #fff; background: #202530; font-weight: 700; cursor: pointer; }
 .regions { margin: 0 0 1.7rem; padding-bottom: .5rem; display: flex; gap: .55rem; overflow-x: auto; }
 .regions button { padding: .65rem 1rem; border: 1px solid #dfe1e6; border-radius: 99px; white-space: nowrap; color: #626773; background: #fff; font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
 .regions button.active { border-color: #ef3d4f; color: #fff; background: #ef3d4f; }
-@media (max-width: 600px) { .catalog-heading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 600px) { .catalog-heading { align-items: flex-start; flex-direction: column; } .controls { align-items: stretch; flex-direction: column; } .controls .search { width: 100%; } .filter-toggles button { flex: 1; } }

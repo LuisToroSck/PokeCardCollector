@@ -2,8 +2,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { App } from './app';
 import { routes } from './app.routes';
+import { CollectionService } from './collection.service';
 
 describe('Collections', () => {
   let httpTesting: HttpTestingController;
@@ -11,7 +13,18 @@ describe('Collections', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(routes)],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter(routes),
+        {
+          provide: CollectionService,
+          useValue: {
+            watchOwned: () => of(new Set<number>()),
+            setOwned: () => Promise.resolve(),
+          },
+        },
+      ],
     }).compileComponents();
     httpTesting = TestBed.inject(HttpTestingController);
   });

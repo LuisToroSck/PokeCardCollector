@@ -1,21 +1,26 @@
 <section class="hero">
-  <p class="eyebrow">Colección de Martín</p>
-  <h1>Pokémon legendarios</h1>
+  <p class="eyebrow">Colección de Martín</p><h1>Pokémon legendarios</h1>
   <p>Solo especies que PokéAPI clasifica oficialmente como legendarias. Los Pokémon míticos son una categoría distinta.</p>
 </section>
-@if (pokemon$ | async; as pokemon) {
+@if (vm$ | async; as vm) {
   <section class="catalog">
     <div class="catalog-heading">
-      <div><p class="eyebrow">Selección especial</p><h2>Legendarios</h2></div>
-      <span>{{ pokemon.length }} Pokémon</span>
+      <div><p class="eyebrow">Selección especial</p><h2>Legendarios</h2></div><span>{{ vm.pokemon.length }} Pokémon</span>
     </div>
-    <label class="search"><input [formControl]="search" type="search" placeholder="Buscar un legendario..." /></label>
+    <div class="controls">
+      <label class="search"><input [formControl]="search" type="search" placeholder="Buscar un legendario..." /></label>
+      <div class="filter-toggles" aria-label="Filtrar colección">
+        <button type="button" [class.active]="filter.value === 'owned'" [attr.aria-pressed]="filter.value === 'owned'" (click)="toggleFilter('owned')">✓ Obtenidos</button>
+        <button type="button" [class.active]="filter.value === 'missing'" [attr.aria-pressed]="filter.value === 'missing'" (click)="toggleFilter('missing')">Faltantes</button>
+      </div>
+    </div>
+    @if (firestoreError()) { <p class="firestore-error">Firestore rechazó la operación. Revisa las reglas de acceso de la base de datos.</p> }
     @if (error()) {
       <div class="state-card">No pudimos consultar los Pokémon legendarios.</div>
-    } @else if (pokemon.length) {
-      <app-pokemon-grid [pokemon]="pokemon" owner="Martín" />
+    } @else if (vm.pokemon.length) {
+      <app-pokemon-grid [pokemon]="vm.pokemon" owner="Martín" [ownedIds]="vm.ownedIds" [savingIds]="savingIds()" (togglePokemon)="togglePokemon($event, vm.ownedIds)" />
     } @else {
-      <div class="state-card">No hay legendarios que coincidan con la búsqueda.</div>
+      <div class="state-card">No hay legendarios que coincidan con los filtros.</div>
     }
   </section>
 }

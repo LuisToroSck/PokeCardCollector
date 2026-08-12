@@ -14,11 +14,20 @@
       <div><p class="eyebrow">{{ vm.region.generation }}</p><h2>{{ vm.region.name }}</h2></div>
       <span>{{ vm.pokemon.length }} Pokémon</span>
     </div>
-    <label class="search"><input [formControl]="search" type="search" [placeholder]="'Buscar en ' + vm.region.name + '...'" /></label>
+    <div class="controls">
+      <label class="search"><input [formControl]="search" type="search" [placeholder]="'Buscar en ' + vm.region.name + '...'" /></label>
+      <div class="filter-toggles" aria-label="Filtrar colección">
+        <button type="button" [class.active]="filter.value === 'owned'" [attr.aria-pressed]="filter.value === 'owned'" (click)="toggleFilter('owned')">✓ Obtenidos</button>
+        <button type="button" [class.active]="filter.value === 'missing'" [attr.aria-pressed]="filter.value === 'missing'" (click)="toggleFilter('missing')">Faltantes</button>
+      </div>
+    </div>
+    @if (firestoreError()) {
+      <p class="firestore-error">Firestore rechazó la operación. Revisa las reglas de acceso de la base de datos.</p>
+    }
     @if (error()) {
       <div class="state-card"><p>No pudimos cargar esta generación.</p><button type="button" (click)="retry()">Intentar otra vez</button></div>
     } @else if (vm.pokemon.length) {
-      <app-pokemon-grid [pokemon]="vm.pokemon" owner="Luis" />
+      <app-pokemon-grid [pokemon]="vm.pokemon" owner="Luis" [ownedIds]="vm.ownedIds" [savingIds]="savingIds()" (togglePokemon)="togglePokemon($event, vm.ownedIds)" />
     } @else {
       <div class="state-card">No hay coincidencias en esta región.</div>
     }

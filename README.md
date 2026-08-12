@@ -70,3 +70,12 @@ El proyecto se despliega automáticamente con GitHub Actions cuando se envían c
 La aplicación quedará disponible en:
 
 `https://luistorosck.github.io/PokeCardCollector/`
+
+## Firebase
+
+La aplicación utiliza el SDK modular de Firebase y está conectada al proyecto `pokecard-3cc3f`.
+Cloud Firestore y Analytics se inicializan desde `FirebaseService`.
+
+Antes de guardar colecciones, crea la base de datos en Firebase Console y configura Firebase
+Authentication junto con reglas de seguridad de Firestore. La configuración web identifica el
+proyecto, pero las reglas son las que protegen los datos.

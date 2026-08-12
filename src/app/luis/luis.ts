@@ -2,16 +2,22 @@ import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject, catchError, combineLatest, map, of, startWith, switchMap } from 'rxjs';
+import { CollectionService } from '../collection.service';
 import { PokemonGrid } from '../pokemon-grid/pokemon-grid';
-import { PokemonService, REGIONS } from '../pokemon.service';
+import { PokemonListItem, PokemonService, REGIONS } from '../pokemon.service';
 
 @Component({ selector: 'app-luis', imports: [AsyncPipe, PokemonGrid, ReactiveFormsModule], templateUrl: './luis.html', styleUrls: ['../collection-page.scss'] })
 export class Luis {
   private readonly service = inject(PokemonService);
+  private readonly collection = inject(CollectionService);
   private readonly regionSubject = new BehaviorSubject(REGIONS[0]);
   readonly regions = REGIONS;
   readonly search = new FormControl('', { nonNullable: true });
+  readonly filter = new FormControl<'all' | 'owned' | 'missing'>('all', { nonNullable: true });
   readonly error = signal(false);
+  readonly firestoreError = signal(false);
+  readonly savingIds = signal<ReadonlySet<number>>(new Set());
+
   readonly vm$ = combineLatest([
     this.regionSubject.pipe(switchMap((region) => {
       this.error.set(false);
@@ -21,7 +27,34 @@ export class Luis {
       );
     })),
     this.search.valueChanges.pipe(startWith('')),
-  ]).pipe(map(([data, term]) => ({ ...data, pokemon: data.pokemon.filter((item) => item.name.includes(term.trim().toLowerCase())) })));
+    this.filter.valueChanges.pipe(startWith('all' as const)),
+    this.collection.watchOwned('luis').pipe(
+      catchError(() => { this.firestoreError.set(true); return of(new Set<number>()); }),
+    ),
+  ]).pipe(map(([data, term, filter, ownedIds]) => ({
+    ...data,
+    ownedIds,
+    pokemon: data.pokemon.filter((item) =>
+      item.name.includes(term.trim().toLowerCase()) &&
+      (filter === 'all' || (filter === 'owned' ? ownedIds.has(item.id) : !ownedIds.has(item.id))),
+    ),
+  })));
+
   selectRegion(region: (typeof REGIONS)[number]): void { this.regionSubject.next(region); }
   retry(): void { this.regionSubject.next(this.regionSubject.value); }
+  toggleFilter(filter: 'owned' | 'missing'): void {
+    this.filter.setValue(this.filter.value === filter ? 'all' : filter);
+  }
+
+  async togglePokemon(pokemon: PokemonListItem, ownedIds: ReadonlySet<number>): Promise<void> {
+    this.firestoreError.set(false);
+    this.savingIds.update((ids) => new Set(ids).add(pokemon.id));
+    try {
+      await this.collection.setOwned('luis', pokemon, !ownedIds.has(pokemon.id));
+    } catch {
+      this.firestoreError.set(true);
+    } finally {
+      this.savingIds.update((ids) => { const next = new Set(ids); next.delete(pokemon.id); return next; });
+    }
+  }
 }
