@@ -57,3 +57,16 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## GitHub Pages
+
+El proyecto se despliega automáticamente con GitHub Actions cuando se envían cambios a `main`.
+
+1. En GitHub, abre `Settings > Pages`.
+2. En `Build and deployment`, selecciona `GitHub Actions` como fuente.
+3. Envía este workflow al repositorio con `git push origin main`.
+4. Revisa el progreso en la pestaña `Actions`.
+
+La aplicación quedará disponible en:
+
+`https://luistorosck.github.io/PokeCardCollector/`
