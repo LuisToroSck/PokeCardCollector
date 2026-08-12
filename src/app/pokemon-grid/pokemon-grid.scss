@@ -1,5 +1,5 @@
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.15rem; }
-.pokemon-card { min-height: 300px; padding: 1rem; display: flex; flex-direction: column; border: 1px solid #e5e6eb; border-radius: 16px; background: #fff; box-shadow: 0 5px 15px rgba(25,29,40,.04); transition: transform .2s, box-shadow .2s; }
+.pokemon-card { min-height: 300px; padding: 1rem; display: flex; flex-direction: column; border: 1px solid #e5e6eb; border-radius: 16px; background: #fff; box-shadow: 0 5px 15px rgba(25,29,40,.04); cursor: pointer; transition: transform .2s, box-shadow .2s; }
 .pokemon-card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(25,29,40,.1); }
 .pokemon-card.obtained { border-color: #49a664; box-shadow: 0 5px 18px rgba(43,137,70,.12); }
 .number { align-self: flex-end; color: #969aa3; font-size: .75rem; font-weight: 800; }
@@ -10,3 +10,19 @@ button { margin-top: auto; padding: .7rem 1rem; border: 0; border-radius: 9px; b
 button span { display: inline; color: inherit; }
 button.remove { background: #e8f6ec; color: #28783f; }
 button:disabled { opacity: .6; cursor: wait; }
+.modal-backdrop { padding: clamp(.5rem, 3vw, 2rem); display: grid; place-items: center; position: fixed; z-index: 1000; inset: 0; background: rgba(13,16,23,.76); backdrop-filter: blur(5px); }
+.card-modal { width: min(1120px, 100%); max-height: 92vh; padding: clamp(1rem, 3vw, 2rem); overflow-y: auto; border-radius: 20px; background: #f7f7fa; box-shadow: 0 28px 80px rgba(0,0,0,.3); cursor: default; }
+.card-modal > header { margin-bottom: 1rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.card-modal header span { color: #2865d8; text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: 800; }
+.card-modal header h2 { margin: .25rem 0 0; color: #171b25; font-size: clamp(1.5rem, 4vw, 2.3rem); }
+.close { width: 42px; height: 42px; margin: 0; padding: 0; flex: 0 0 auto; border-radius: 50%; color: #4d535e; background: #e8eaf0; font-size: 1.8rem; line-height: 1; }
+.result-count { margin: 0 0 1rem; color: #777d88; font-size: .85rem; }
+.physical-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1rem; }
+.physical-card { min-height: 300px; padding: .8rem; display: flex; flex-direction: column; border: 1px solid #e1e3e8; border-radius: 13px; background: #fff; cursor: default; }
+.physical-card img { width: 100%; aspect-ratio: 2.5 / 3.5; object-fit: contain; border-radius: 8px; background: #eceef2; }
+.physical-card h3 { margin: .75rem 0 .25rem; font-size: .88rem; }
+.physical-card code { color: #9297a1; font-size: .7rem; }
+.no-card-image { aspect-ratio: 2.5 / 3.5; display: grid; place-items: center; border-radius: 8px; color: #969ba5; background: #eceef2; }
+.catalog-state { padding: 5rem 1rem; border-radius: 13px; text-align: center; color: #646a75; background: #fff; }
+.catalog-state.error { color: #9a2e3b; background: #fff0f2; }
+@media (max-width: 500px) { .physical-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; } .physical-card { min-height: 0; } }

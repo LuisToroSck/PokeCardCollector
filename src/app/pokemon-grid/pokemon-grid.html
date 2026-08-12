@@ -1,6 +1,14 @@
 <div class="grid">
   @for (item of pokemon(); track item.id) {
-    <article class="pokemon-card" [class.obtained]="ownedIds().has(item.id)">
+    <article
+      class="pokemon-card"
+      [class.obtained]="ownedIds().has(item.id)"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'Ver cartas físicas de ' + item.name"
+      (click)="openCards(item)"
+      (keydown.enter)="openCards(item)"
+    >
       <span class="number">#{{ item.id.toString().padStart(4, '0') }}</span>
       <div class="image-wrap">
         <img
@@ -15,7 +23,7 @@
         type="button"
         [class.remove]="ownedIds().has(item.id)"
         [disabled]="savingIds().has(item.id)"
-        (click)="togglePokemon.emit(item)"
+        (click)="$event.stopPropagation(); togglePokemon.emit(item)"
       >
         <span>
           @if (savingIds().has(item.id)) {
@@ -30,3 +38,42 @@
     </article>
   }
 </div>
+
+@if (selectedPokemon(); as selected) {
+  <div class="modal-backdrop" role="presentation" (click)="closeCards()">
+    <section class="card-modal" role="dialog" aria-modal="true" [attr.aria-label]="'Cartas físicas de ' + selected.name" (click)="$event.stopPropagation()">
+      <header>
+        <div>
+          <span>Catálogo TCGdex</span>
+          <h2>Cartas de {{ selected.name | titlecase }}</h2>
+        </div>
+        <button class="close" type="button" aria-label="Cerrar catálogo" (click)="closeCards()">×</button>
+      </header>
+
+      @if (cardCatalog() | async; as catalog) {
+        @if (catalog.status === 'loading') {
+          <div class="catalog-state">Buscando cartas físicas...</div>
+        } @else if (catalog.status === 'error') {
+          <div class="catalog-state error">No pudimos consultar TCGdex en este momento.</div>
+        } @else if (catalog.cards.length === 0) {
+          <div class="catalog-state">TCGdex no encontró cartas para este Pokémon.</div>
+        } @else {
+          <p class="result-count">{{ catalog.cards.length }} cartas encontradas</p>
+          <div class="physical-grid">
+            @for (card of catalog.cards; track card.id) {
+              <article class="physical-card">
+                @if (card.image) {
+                  <img [src]="card.image + '/high.webp'" [alt]="card.name" loading="lazy" (error)="useCardFallback($event)" />
+                } @else {
+                  <div class="no-card-image">Sin imagen</div>
+                }
+                <h3>{{ card.name }}</h3>
+                <code>{{ card.id }}</code>
+              </article>
+            }
+          </div>
+        }
+      }
+    </section>
+  </div>
+}

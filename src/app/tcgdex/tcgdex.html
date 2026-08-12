@@ -1,0 +1,36 @@
+<section class="hero">
+  <p class="eyebrow">Nueva integración</p>
+  <h1>TCGdex conectado</h1>
+  <p>Prueba inicial de acceso al catálogo de cartas Pokémon en español.</p>
+</section>
+
+@if (state$ | async; as state) {
+  <section class="content">
+    @if (state.status === 'loading') {
+      <div class="status">Consultando series de TCGdex...</div>
+    } @else if (state.status === 'error') {
+      <div class="status error">
+        No se pudo conectar con TCGdex. Comprueba la red e intenta nuevamente.
+      </div>
+    } @else {
+      <div class="heading">
+        <div><span class="dot"></span><strong>API operativa</strong></div>
+        <span>{{ state.series.length }} series recibidas</span>
+      </div>
+      <div class="series-grid">
+        @for (serie of state.series; track serie.id) {
+          <article>
+            @if (serie.logo) {
+              <img [src]="serie.logo + '/high.webp'" [alt]="serie.name" />
+            } @else {
+              <span class="placeholder">TCG</span>
+            }
+            <h2>{{ serie.name }}</h2>
+            <code>{{ serie.id }}</code>
+          </article>
+        }
+      </div>
+      <p class="note">Esta vista valida la conexión. Aún no modifica las colecciones de Firestore.</p>
+    }
+  </section>
+}

@@ -44,6 +44,20 @@ describe('Collections', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Bulbasaur');
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.pokemon-card')?.click();
+    fixture.detectChanges();
+    const cardsRequest = httpTesting.expectOne((request) =>
+      request.url === 'https://api.tcgdex.net/v2/en/cards' &&
+      request.params.get('name') === 'bulbasaur' &&
+      request.params.get('category') === 'Pokemon',
+    );
+    cardsRequest.flush([
+      { id: 'base1-44', localId: '44', name: 'Bulbasaur', image: 'https://assets.tcgdex.net/es/base/base1/44' },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('base1-44');
   });
 
   it('requests legendary and mythical species for Martin', async () => {
@@ -66,5 +80,22 @@ describe('Collections', () => {
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Articuno');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Mew');
+  });
+
+  it('connects to TCGdex and renders its series', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject((await import('@angular/router')).Router);
+    await router.navigateByUrl('/tcgdex');
+    fixture.detectChanges();
+
+    httpTesting.expectOne('https://api.tcgdex.net/v2/es/series').flush([
+      { id: 'base', name: 'Base', logo: 'https://assets.tcgdex.net/es/base/base1/logo' },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent;
+    expect(text).toContain('API operativa');
+    expect(text).toContain('Base');
   });
 });
