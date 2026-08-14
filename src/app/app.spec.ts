@@ -98,4 +98,23 @@ describe('Collections', () => {
     expect(text).toContain('API operativa');
     expect(text).toContain('Base');
   });
+
+  it('resolves the custom Ash collection from Pokedex IDs', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject((await import('@angular/router')).Router);
+    await router.navigateByUrl('/luis-ash');
+    fixture.detectChanges();
+
+    httpTesting.expectOne('https://pokeapi.co/api/v2/pokemon-species/25').flush({
+      id: 25,
+      name: 'pikachu',
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent;
+    expect(text).toContain('Los Pokémon de Ash');
+    expect(text).toContain('Pikachu');
+    expect(text).toContain('1 Pokémon configurados');
+  });
 });

@@ -3,7 +3,7 @@ import { Observable, shareReplay } from 'rxjs';
 import { FirebaseService } from './firebase.service';
 import { PokemonListItem } from './pokemon.service';
 
-export type CollectionOwner = 'luis' | 'martin';
+export type CollectionOwner = 'luis' | 'martin' | 'luis-ash';
 
 @Injectable({ providedIn: 'root' })
 export class CollectionService {
@@ -51,7 +51,11 @@ export class CollectionService {
 
     batch.set(
       ownerDocument,
-      { name: owner === 'luis' ? 'Luis' : 'Martín', updatedAt: serverTimestamp() },
+      {
+        name: owner === 'martin' ? 'Martín' : 'Luis',
+        collection: owner === 'luis-ash' ? 'Pokémon de Ash' : 'Pokédex',
+        updatedAt: serverTimestamp(),
+      },
       { merge: true },
     );
 

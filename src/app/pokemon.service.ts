@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map, shareReplay } from 'rxjs';
+import { Observable, forkJoin, map, of, shareReplay } from 'rxjs';
 
 interface NamedResource { name: string; url: string; }
 interface GenerationResponse { pokemon_species: NamedResource[]; }
+interface PokemonSpeciesResponse { id: number; name: string; }
 interface ResourceCountResponse { count: number; }
 interface LegendaryGraphqlResponse { data: { pokemon_species: { id: number; name: string }[] }; }
 
@@ -41,6 +42,7 @@ export class PokemonService {
   private legendaryCache?: Observable<PokemonListItem[]>;
   private speciesCountCache?: Observable<number>;
   private allGenerationsCache?: Observable<PokemonListItem[]>;
+  private readonly customListCache = new Map<string, Observable<PokemonListItem[]>>();
 
   getByGeneration(generationId: number): Observable<PokemonListItem[]> {
     if (generationId === 0) return this.getAllGenerations();
@@ -103,6 +105,26 @@ export class PokemonService {
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     return this.speciesCountCache;
+  }
+
+  getPokemonByIds(ids: number[]): Observable<PokemonListItem[]> {
+    const uniqueIds = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))];
+    if (uniqueIds.length === 0) return of([]);
+
+    const cacheKey = uniqueIds.slice().sort((a, b) => a - b).join(',');
+    const cached = this.customListCache.get(cacheKey);
+    if (cached) return cached;
+
+    const request = forkJoin(
+      uniqueIds.map((id) => this.http.get<PokemonSpeciesResponse>(`${this.restUrl}/pokemon-species/${id}`)),
+    ).pipe(
+      map((pokemon) => pokemon
+        .map((item) => this.toListItem(item.id, item.name))
+        .sort((a, b) => a.id - b.id)),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+    this.customListCache.set(cacheKey, request);
+    return request;
   }
 
   private toListItem(id: number, name: string): PokemonListItem {

@@ -1,0 +1,41 @@
+<section class="hero">
+  <p class="eyebrow">Colección especial de Luis</p>
+  <h1>Los Pokémon de Ash</h1>
+  <p>Completa en cartas todos los Pokémon que han formado parte del equipo de Ash.</p>
+</section>
+
+@if (vm$ | async; as vm) {
+  <section class="catalog">
+    <div class="catalog-heading">
+      <div><p class="eyebrow">Lista personalizada</p><h2>Equipo de Ash</h2></div>
+      <span>{{ vm.total }} Pokémon configurados</span>
+    </div>
+
+    <div class="progress-grid single" aria-label="Progreso de la colección">
+      <article class="progress-card total">
+        <div><span>Colección obtenida</span><strong>{{ vm.percent }}%</strong></div>
+        <div class="progress-track"><span [style.width.%]="vm.percent"></span></div>
+        <small>{{ vm.obtained }} de {{ vm.total }} obtenidos</small>
+      </article>
+    </div>
+
+    <div class="controls">
+      <label class="search"><input [formControl]="search" type="search" placeholder="Buscar en el equipo de Ash..." /></label>
+      <div class="filter-toggles" aria-label="Filtrar colección">
+        <button type="button" [class.active]="filter.value === 'owned'" [attr.aria-pressed]="filter.value === 'owned'" (click)="toggleFilter('owned')">✓ Obtenidos</button>
+        <button type="button" [class.active]="filter.value === 'missing'" [attr.aria-pressed]="filter.value === 'missing'" (click)="toggleFilter('missing')">Faltantes</button>
+      </div>
+    </div>
+
+    @if (firestoreError()) { <p class="firestore-error">Firestore rechazó la operación. Revisa las reglas de acceso de la base de datos.</p> }
+    @if (apiError()) {
+      <div class="state-card">No pudimos resolver la lista desde PokéAPI. Revisa que todos los IDs sean válidos.</div>
+    } @else if (configuredIds.length === 0) {
+      <div class="state-card">Agrega números de Pokédex en <code>src/app/ash-pokemon.ids.ts</code>.</div>
+    } @else if (vm.pokemon.length) {
+      <app-pokemon-grid [pokemon]="vm.pokemon" owner="Luis" [ownedIds]="vm.ownedIds" [savingIds]="savingIds()" (togglePokemon)="togglePokemon($event, vm.ownedIds)" />
+    } @else {
+      <div class="state-card">No hay Pokémon que coincidan con los filtros.</div>
+    }
+  </section>
+}
