@@ -10,7 +10,7 @@ import { PokemonListItem, PokemonService, REGIONS } from '../pokemon.service';
 export class Luis {
   private readonly service = inject(PokemonService);
   private readonly collection = inject(CollectionService);
-  private readonly regionSubject = new BehaviorSubject(REGIONS[0]);
+  private readonly regionSubject = new BehaviorSubject(REGIONS[1]);
   readonly regions = REGIONS;
   readonly search = new FormControl('', { nonNullable: true });
   readonly filter = new FormControl<'all' | 'owned' | 'missing'>('all', { nonNullable: true });
@@ -50,7 +50,10 @@ export class Luis {
     };
   }));
 
-  selectRegion(region: (typeof REGIONS)[number]): void { this.regionSubject.next(region); }
+  selectRegion(region: (typeof REGIONS)[number]): void {
+    this.search.setValue('');
+    this.regionSubject.next(region);
+  }
   retry(): void { this.regionSubject.next(this.regionSubject.value); }
   toggleFilter(filter: 'owned' | 'missing'): void {
     this.filter.setValue(this.filter.value === filter ? 'all' : filter);

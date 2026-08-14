@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, shareReplay } from 'rxjs';
+import { Observable, forkJoin, map, shareReplay } from 'rxjs';
 
 interface NamedResource { name: string; url: string; }
 interface GenerationResponse { pokemon_species: NamedResource[]; }
@@ -20,6 +20,7 @@ export interface RegionOption {
 }
 
 export const REGIONS: RegionOption[] = [
+  { id: 0, name: 'Todos', generation: 'Todas las generaciones' },
   { id: 1, name: 'Kanto', generation: 'Generación I' },
   { id: 2, name: 'Johto', generation: 'Generación II' },
   { id: 3, name: 'Hoenn', generation: 'Generación III' },
@@ -39,8 +40,11 @@ export class PokemonService {
   private readonly generationCache = new Map<number, Observable<PokemonListItem[]>>();
   private legendaryCache?: Observable<PokemonListItem[]>;
   private speciesCountCache?: Observable<number>;
+  private allGenerationsCache?: Observable<PokemonListItem[]>;
 
   getByGeneration(generationId: number): Observable<PokemonListItem[]> {
+    if (generationId === 0) return this.getAllGenerations();
+
     const cached = this.generationCache.get(generationId);
     if (cached) return cached;
 
@@ -52,6 +56,16 @@ export class PokemonService {
     );
     this.generationCache.set(generationId, request);
     return request;
+  }
+
+  private getAllGenerations(): Observable<PokemonListItem[]> {
+    this.allGenerationsCache ??= forkJoin(
+      REGIONS.filter((region) => region.id > 0).map((region) => this.getByGeneration(region.id)),
+    ).pipe(
+      map((generations) => generations.flat().sort((a, b) => a.id - b.id)),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+    return this.allGenerationsCache;
   }
 
   getLegendary(): Observable<PokemonListItem[]> {

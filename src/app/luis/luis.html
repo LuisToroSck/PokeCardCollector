@@ -11,15 +11,17 @@
       }
     </nav>
     <div class="catalog-heading">
-      <div><p class="eyebrow">{{ vm.region.generation }}</p><h2>{{ vm.region.name }}</h2></div>
+      <div><p class="eyebrow">{{ vm.region.generation }}</p><h2>{{ vm.region.id === 0 ? 'Pokédex completa' : vm.region.name }}</h2></div>
       <span>{{ vm.pokemon.length }} Pokémon</span>
     </div>
-    <div class="progress-grid" aria-label="Progreso de la colección">
-      <article class="progress-card">
-        <div><span>{{ vm.region.name }}</span><strong>{{ vm.regionPercent }}%</strong></div>
-        <div class="progress-track"><span [style.width.%]="vm.regionPercent"></span></div>
-        <small>{{ vm.regionOwned }} de {{ vm.regionTotal }} obtenidos</small>
-      </article>
+    <div class="progress-grid" [class.single]="vm.region.id === 0" aria-label="Progreso de la colección">
+      @if (vm.region.id !== 0) {
+        <article class="progress-card">
+          <div><span>{{ vm.region.name }}</span><strong>{{ vm.regionPercent }}%</strong></div>
+          <div class="progress-track"><span [style.width.%]="vm.regionPercent"></span></div>
+          <small>{{ vm.regionOwned }} de {{ vm.regionTotal }} obtenidos</small>
+        </article>
+      }
       <article class="progress-card total">
         <div><span>Pokédex total</span><strong>{{ vm.totalPercent }}%</strong></div>
         <div class="progress-track"><span [style.width.%]="vm.totalPercent"></span></div>
@@ -27,7 +29,7 @@
       </article>
     </div>
     <div class="controls">
-      <label class="search"><input [formControl]="search" type="search" [placeholder]="'Buscar en ' + vm.region.name + '...'" /></label>
+      <label class="search"><input [formControl]="search" type="search" [placeholder]="vm.region.id === 0 ? 'Buscar en toda la Pokédex...' : 'Buscar en ' + vm.region.name + '...'" /></label>
       <div class="filter-toggles" aria-label="Filtrar colección">
         <button type="button" [class.active]="filter.value === 'owned'" [attr.aria-pressed]="filter.value === 'owned'" (click)="toggleFilter('owned')">✓ Obtenidos</button>
         <button type="button" [class.active]="filter.value === 'missing'" [attr.aria-pressed]="filter.value === 'missing'" (click)="toggleFilter('missing')">Faltantes</button>

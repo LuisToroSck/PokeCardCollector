@@ -10,7 +10,7 @@ import { PokemonListItem, PokemonService, REGIONS } from '../pokemon.service';
 export class Martin {
   private readonly service = inject(PokemonService);
   private readonly collection = inject(CollectionService);
-  private readonly regionSubject = new BehaviorSubject(REGIONS[0]);
+  private readonly regionSubject = new BehaviorSubject(REGIONS[1]);
 
   readonly regions = REGIONS;
   readonly search = new FormControl('', { nonNullable: true });
