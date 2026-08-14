@@ -2,10 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { App } from './app';
 import { routes } from './app.routes';
 import { CollectionService } from './collection.service';
+import { PokemonService } from './pokemon.service';
 
 describe('Collections', () => {
   let httpTesting: HttpTestingController;
@@ -99,22 +100,17 @@ describe('Collections', () => {
     expect(text).toContain('Base');
   });
 
-  it('resolves the custom Ash collection from Pokedex IDs', async () => {
-    const fixture = TestBed.createComponent(App);
-    const router = TestBed.inject((await import('@angular/router')).Router);
-    await router.navigateByUrl('/luis-ash');
-    fixture.detectChanges();
-
+  it('resolves custom Pokemon from Pokedex IDs', async () => {
+    const pokemonService = TestBed.inject(PokemonService);
+    const pokemonPromise = firstValueFrom(pokemonService.getPokemonByIds([25]));
     httpTesting.expectOne('https://pokeapi.co/api/v2/pokemon-species/25').flush({
       id: 25,
       name: 'pikachu',
     });
-    fixture.detectChanges();
-    await fixture.whenStable();
 
-    const text = (fixture.nativeElement as HTMLElement).textContent;
-    expect(text).toContain('Los Pokémon de Ash');
-    expect(text).toContain('Pikachu');
-    expect(text).toContain('1 Pokémon configurados');
+    const pokemon = await pokemonPromise;
+    expect(pokemon).toEqual([
+      expect.objectContaining({ id: 25, name: 'pikachu' }),
+    ]);
   });
 });
